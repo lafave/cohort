@@ -1,0 +1,34 @@
+<table>
+  <tr>
+    <th>
+      Cohort
+    </th>
+    <th>
+      Users
+    </th>
+    <% @results.cohorts.last.order_intervals.each do |interval| %>
+      <th>
+        <%= interval.title %>
+      </th>
+    <% end %>
+  </tr>
+
+  <% @results.cohorts.each do |cohort| %>
+    <tr>
+      <td>
+        <%= cohort.title %>
+      </td>
+      <td>
+        <%= cohort.total %>
+      </td>
+      <% cohort.order_intervals.each do |interval| %>
+        <td>
+          <%= interval.first_time_orders %>
+        </td>
+      <% end %>
+      <% (@results.max_order_intervals - cohort.order_intervals.size).times do %>
+        <td></td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
