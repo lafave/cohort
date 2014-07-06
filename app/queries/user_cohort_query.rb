@@ -85,7 +85,7 @@ class UserCohortQuery
 
     {
       :cohorts              => cohorts,
-      :max_interval_buckets => cohorts.last[:interval_buckets].size
+      :max_interval_buckets => cohorts.last.try(:[], :interval_buckets).try(:size) || 0
     }
   end
 
