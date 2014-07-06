@@ -2,7 +2,7 @@ class PagesController < ApplicationController
 
   def index
     @results      = UserCohortQuery.execute index_params
-    @cohort_count = index_params[:cohort_count]
+    @cohort_count = index_params[:cohort_count] || @results.cohorts.count
   end
 
   private
