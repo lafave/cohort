@@ -11,7 +11,7 @@ class UserCohortQuery
   #
   # @return [UserCohortQuery]
   def initialize(cohort_count: 8)
-    @cohort_count = cohort_count
+    @cohort_count = cohort_count < 0 ? 0 : cohort_count
   end
 
   # @note cohorts can be accessed via the `cohorts` method.
