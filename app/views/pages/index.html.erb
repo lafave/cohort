@@ -3,8 +3,8 @@
     <tr>
       <th>Cohort</th>
       <th>Users</th>
-      <% @results.cohorts.last.order_intervals.each do |interval| %>
-        <th><%= interval.title %></th>
+      <% @results.cohorts.last.interval_buckets.each do |bucket| %>
+        <th><%= bucket.title %></th>
       <% end %>
     </tr>
   </thead>
@@ -14,10 +14,10 @@
       <tr>
         <td><%= cohort.title %></td>
         <td><%= cohort.total %></td>
-        <% cohort.order_intervals.each do |interval| %>
-          <%= formatted_order_interval(interval, cohort.total) %>
+        <% cohort.interval_buckets.each do |bucket| %>
+          <%= formatted_interval_bucket(bucket, cohort.total) %>
         <% end %>
-        <% (@results.max_order_intervals - cohort.order_intervals.size).times do %>
+        <% (@results.max_interval_buckets - cohort.interval_buckets.size).times do %>
           <td></td>
         <% end %>
       </tr>

@@ -84,8 +84,8 @@ class UserCohortQuery
       .take(@cohort_count)
 
     {
-      :cohorts             => cohorts,
-      :max_order_intervals => cohorts.last[:order_intervals].size
+      :cohorts              => cohorts,
+      :max_interval_buckets => cohorts.last[:interval_buckets].size
     }
   end
 
@@ -101,9 +101,9 @@ class UserCohortQuery
       end_of_week       = week.end_of_week.strftime(time_format)
 
       {
-        :order_intervals => format_order_buckets(cohort["orders"]["buckets"]),
-        :title           => "#{beginning_of_week}-#{end_of_week}",
-        :total           => cohort["doc_count"]
+        :interval_buckets => format_interval_buckets(cohort["orders"]["buckets"]),
+        :title            => "#{beginning_of_week}-#{end_of_week}",
+        :total            => cohort["doc_count"]
       }
     end
   end
@@ -112,7 +112,7 @@ class UserCohortQuery
   #   order data.
   #
   # @return [Hash]
-  def format_order_buckets(order_buckets)
+  def format_interval_buckets(order_buckets)
     order_buckets.each_with_index.map do |bucket, i|
       {
         :first_time_orders => bucket["first_time_orders"]["doc_count"],
