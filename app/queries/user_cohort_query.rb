@@ -1,5 +1,3 @@
-require "jbuilder"
-
 class UserCohortQuery
   # Convenience method to execute the query object.
   def self.execute(*args)
