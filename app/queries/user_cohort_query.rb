@@ -54,7 +54,7 @@ class UserCohortQuery
                 json.time_zone -8
               end
               json.aggs do
-                json.first_time_orders do
+                json.first_time_orderers do
                   json.filter do
                     json.bool do
                       json.set! :must, [
@@ -114,9 +114,9 @@ class UserCohortQuery
   def format_interval_buckets(order_buckets)
     order_buckets.each_with_index.map do |bucket, i|
       {
-        :first_time_orders => bucket["first_time_orders"]["doc_count"],
-        :title             => "#{((i + 1) * 7) - 7}-#{(i + 1) * 7} days",
-        :total             => bucket["doc_count"]
+        :num_first_time_orderers => bucket["first_time_orderers"]["doc_count"],
+        :title                   => "#{((i + 1) * 7) - 7}-#{(i + 1) * 7} days",
+        :total                   => bucket["doc_count"]
       }
     end
   end
