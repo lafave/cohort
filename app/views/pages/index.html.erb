@@ -15,11 +15,7 @@
         <td><%= cohort.title %></td>
         <td><%= cohort.total %></td>
         <% cohort.order_intervals.each do |interval| %>
-          <td>
-            <%= "#{number_to_percentage(interval.total.to_f / cohort.total.to_f * 100, precision: 1)} orderers (#{interval.total})" %>
-            <br />
-            <%= "#{number_to_percentage(interval.first_time_orders.to_f / cohort.total.to_f * 100, precision: 1)} 1st time (#{interval.first_time_orders})" %>
-          </td>
+          <%= formatted_order_interval(interval, cohort.total) %>
         <% end %>
         <% (@results.max_order_intervals - cohort.order_intervals.size).times do %>
           <td></td>
