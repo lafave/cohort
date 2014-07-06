@@ -49,7 +49,6 @@ class UserCohortQuery
             json.orders do
               json.date_histogram do
                 json.field :created_at
-                json.format :"MM/dd"
                 json.interval :week
                 json.min_doc_count 0
                 json.time_zone -8
