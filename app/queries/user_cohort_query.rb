@@ -93,7 +93,7 @@ class UserCohortQuery
   #
   # @return [Hash]
   def format_cohorts(cohorts)
-    time_format = "%-m/%e"
+    time_format = "%-m/%-e"
 
     cohorts.map do |cohort|
       week              = Time.parse(cohort["key_as_string"])
