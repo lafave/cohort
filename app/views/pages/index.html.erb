@@ -1,7 +1,7 @@
 <%= form_tag("/", method: :get, role: "form-horizontal", class: "form-horizontal") do %>
   <div class="form-group form-group-sm">
-    <%= label_tag(:cohort_count, "Number of cohorts:", class: "col-sm-2 control-label") %>
-    <div class="col-sm-1">
+    <%= label_tag(:cohort_count, "Number of cohorts:", class: "col-sm-4 control-label") %>
+    <div class="col-sm-2">
       <%= number_field_tag :cohort_count, nil, in: 1...100, value: @results.cohorts.size, inputmode: "numeric", pattern: "[0-9]*", class: "form-control" %>
     </div>
     <button type="submit" class="btn btn-default btn-sm">Submit</button>
