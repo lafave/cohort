@@ -85,7 +85,7 @@ class UserCohortQuery
 
     {
       :cohorts             => cohorts,
-      :max_order_intervals => cohorts.map { |c| c[:order_intervals].size }.max
+      :max_order_intervals => cohorts.last[:order_intervals].size
     }
   end
 
