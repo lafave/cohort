@@ -7,6 +7,8 @@ class UserCohortQuery
   # @param cohort_count [Integer] the number of user cohorts to fetch.
   #   Default: 8
   #
+  # @note if cohort_count < 0 then it will be set to 0.
+  #
   # @return [UserCohortQuery]
   def initialize(cohort_count: 8)
     @cohort_count = cohort_count < 0 ? 0 : cohort_count
