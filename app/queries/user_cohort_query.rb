@@ -16,7 +16,7 @@ class UserCohortQuery
   #
   # @return [Hashie::Mash]
   def execute
-    results = Order.__elasticsearch__.client.search \
+    results = Elasticsearch::Model.client.search \
       :body  => build_query,
       :index => :orders,
       :type  => :order
