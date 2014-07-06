@@ -43,7 +43,7 @@ class UserCohortQuery
             json.format :"yyyy-MM-dd"
             json.interval :week
             json.min_doc_count 0
-            json.time_zone -8
+            json.time_zone -7
           end
           json.aggs do
             json.orders do
@@ -51,7 +51,7 @@ class UserCohortQuery
                 json.field :created_at
                 json.interval :week
                 json.min_doc_count 0
-                json.time_zone -8
+                json.time_zone -7
               end
               json.aggs do
                 json.first_time_orderers do
