@@ -24,7 +24,7 @@
       <% @results.cohorts.each do |cohort| %>
         <tr>
           <td><%= cohort.title %></td>
-          <td><%= cohort.total %></td>
+          <td><%= number_with_delimiter(cohort.total) %> users</td>
           <% cohort.interval_buckets.each do |bucket| %>
             <%= formatted_interval_bucket(bucket, cohort.total) %>
           <% end %>
