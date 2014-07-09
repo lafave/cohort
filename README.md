@@ -8,4 +8,5 @@ To import data from PostgreSQL into elasticsearch just run:
 
 ```
 bundle exec rake elasticsearch:import_orders
+bundle exec rake elasticsearch:import_users
 ```
