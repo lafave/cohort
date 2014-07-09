@@ -20,8 +20,8 @@ class UserCohortQuery
   def execute
     results = Elasticsearch::Model.client.search \
       :body  => build_query,
-      :index => :orders,
-      :type  => :order
+      :index => [:orders, :users],
+      :type  => [:order, :user]
 
     Hashie::Mash.new(format_results(results))
   end
@@ -37,42 +37,30 @@ class UserCohortQuery
       end
       # Aggregations
       json.aggs do
-        json.weekly do
-          json.date_histogram do
-            json.field :"user.created_at"
-            json.format :"yyyy-MM-dd"
-            json.interval :week
-            json.min_doc_count 0
-            json.time_zone -7
+        json.orders do
+          json.filter do
+            json.bool do
+              json.set! :must, [
+                { :term => { :_type => :order } }
+              ]
+            end
           end
           json.aggs do
-            json.user_count do
-              json.cardinality do
-                json.field :"user.created_at"
-                json.precision_threshold 1000
-              end
-            end
-            json.orders do
+            json.weekly do
               json.date_histogram do
-                json.field :created_at
+                json.field :"user.created_at"
+                json.format :"yyyy-MM-dd"
                 json.interval :week
                 json.min_doc_count 0
                 json.time_zone -7
               end
               json.aggs do
-                json.user_count do
-                  json.cardinality do
-                    json.field :"user.created_at"
-                    json.precision_threshold 1000
-                  end
-                end
-                json.first_time_orderers do
-                  json.filter do
-                    json.bool do
-                      json.set! :must, [
-                        { :term => { :order_num => 1 } }
-                      ]
-                    end
+                json.cohorts do
+                  json.date_histogram do
+                    json.field :created_at
+                    json.interval :week
+                    json.min_doc_count 0
+                    json.time_zone -7
                   end
                   json.aggs do
                     json.user_count do
@@ -81,8 +69,45 @@ class UserCohortQuery
                         json.precision_threshold 1000
                       end
                     end
+                    json.first_time_orderers do
+                      json.filter do
+                        json.bool do
+                          json.set! :must, [
+                            { :term => { :order_num => 1 } }
+                          ]
+                        end
+                      end
+                      json.aggs do
+                        json.user_count do
+                          json.cardinality do
+                            json.field :"user.created_at"
+                            json.precision_threshold 1000
+                          end
+                        end
+                      end
+                    end
                   end
                 end
+              end
+            end
+          end
+        end
+        json.users do
+          json.filter do
+            json.bool do
+              json.set! :must, [
+                { :term => { :_type => :user } }
+              ]
+            end
+          end
+          json.aggs do
+            json.weekly do
+              json.date_histogram do
+                json.field :"user.created_at"
+                json.format :"yyyy-MM-dd"
+                json.interval :week
+                json.min_doc_count 0
+                json.time_zone -7
               end
             end
           end
@@ -98,7 +123,7 @@ class UserCohortQuery
   #
   # @return [Hash]
   def format_results(results)
-    cohorts = format_cohorts(results["aggregations"]["weekly"]["buckets"])
+    cohorts = format_cohorts(results["aggregations"])
       .reverse
       .take(@cohort_count)
 
@@ -114,15 +139,15 @@ class UserCohortQuery
   def format_cohorts(cohorts)
     time_format = "%-m/%-e"
 
-    cohorts.map do |cohort|
+    cohorts["orders"]["weekly"]["buckets"].each_with_index.map do |cohort, i|
       week              = Time.parse(cohort["key_as_string"])
       beginning_of_week = week.beginning_of_week.strftime(time_format)
       end_of_week       = week.end_of_week.strftime(time_format)
 
       {
-        :interval_buckets => format_interval_buckets(cohort["orders"]["buckets"]),
+        :interval_buckets => format_interval_buckets(cohort["cohorts"]["buckets"]),
         :title            => "#{beginning_of_week}-#{end_of_week}",
-        :total            => cohort["user_count"]["value"]
+        :total            => cohorts["users"]["weekly"]["buckets"][i].try(:[], "doc_count")
       }
     end
   end
