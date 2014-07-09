@@ -46,6 +46,12 @@ class UserCohortQuery
             json.time_zone -7
           end
           json.aggs do
+            json.user_count do
+              json.cardinality do
+                json.field :"user.created_at"
+                json.precision_threshold 1000
+              end
+            end
             json.orders do
               json.date_histogram do
                 json.field :created_at
@@ -54,12 +60,26 @@ class UserCohortQuery
                 json.time_zone -7
               end
               json.aggs do
+                json.user_count do
+                  json.cardinality do
+                    json.field :"user.created_at"
+                    json.precision_threshold 1000
+                  end
+                end
                 json.first_time_orderers do
                   json.filter do
                     json.bool do
                       json.set! :must, [
                         { :term => { :order_num => 1 } }
                       ]
+                    end
+                  end
+                  json.aggs do
+                    json.user_count do
+                      json.cardinality do
+                        json.field :"user.created_at"
+                        json.precision_threshold 1000
+                      end
                     end
                   end
                 end
@@ -102,7 +122,7 @@ class UserCohortQuery
       {
         :interval_buckets => format_interval_buckets(cohort["orders"]["buckets"]),
         :title            => "#{beginning_of_week}-#{end_of_week}",
-        :total            => cohort["doc_count"]
+        :total            => cohort["user_count"]["value"]
       }
     end
   end
@@ -114,9 +134,9 @@ class UserCohortQuery
   def format_interval_buckets(order_buckets)
     order_buckets.each_with_index.map do |bucket, i|
       {
-        :num_first_time_orderers => bucket["first_time_orderers"]["doc_count"],
+        :num_first_time_orderers => bucket["first_time_orderers"]["user_count"]["value"],
         :title                   => "#{((i + 1) * 7) - 7}-#{(i + 1) * 7} days",
-        :total                   => bucket["doc_count"]
+        :total                   => bucket["user_count"]["value"]
       }
     end
   end
